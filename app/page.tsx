@@ -119,6 +119,16 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
   return body as T;
 }
 
+const PANE =
+  "flex flex-col gap-8 overflow-y-auto rounded-2xl border border-zinc-800/50 bg-zinc-900/40 p-8 shadow-2xl backdrop-blur-md";
+const FIELD =
+  "w-full rounded-xl border border-zinc-800 bg-zinc-900/50 p-3 text-sm text-zinc-100 transition-all duration-300 ease-in-out outline-none placeholder:text-zinc-600 focus:border-zinc-500 focus:ring-0";
+const PRIMARY =
+  "rounded-xl bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-950 transition-all duration-300 ease-in-out hover:bg-white disabled:opacity-50";
+const OUTLINE =
+  "rounded-xl border border-zinc-800 text-zinc-400 transition-all duration-300 ease-in-out hover:border-zinc-600 hover:text-zinc-200 disabled:opacity-50";
+const LABEL = "flex flex-col gap-2 text-sm font-medium text-zinc-400";
+
 export default function Home() {
   const [phase, setPhase] = useState<"setup" | "active">("setup");
   const [prospectName, setProspectName] = useState("");
@@ -246,11 +256,11 @@ export default function Home() {
   }
 
   return (
-    <div className="grid h-screen grid-cols-1 md:grid-cols-2">
-      <section className="flex flex-col overflow-y-auto border-r border-zinc-300 bg-white p-6">
-        <header className="mb-6">
-          <h1 className="text-xl font-semibold tracking-tight">Active Call</h1>
-          <p className="text-sm text-zinc-500">
+    <div className="grid h-screen grid-cols-1 gap-8 bg-zinc-950 p-8 md:grid-cols-2">
+      <section className={PANE}>
+        <header className="flex flex-col gap-2">
+          <h1 className="text-xl font-semibold tracking-tight text-zinc-50">Active Call</h1>
+          <p className="text-sm text-zinc-400">
             {phase === "setup"
               ? "Set up the prospect, then work the eight stages."
               : `Stage ${stage} of 8 · ${currentStage.name}`}
@@ -258,46 +268,42 @@ export default function Home() {
         </header>
 
         {error && (
-          <p className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p className="rounded-xl border border-rose-900/60 bg-rose-950/40 px-4 py-3 text-sm text-rose-300 transition-all duration-300 ease-in-out">
             {error}
           </p>
         )}
 
         {phase === "setup" && (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-8">
             {summary && (
-              <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+              <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 p-5 transition-all duration-300 ease-in-out">
+                <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
                   Gemini call summary
                 </p>
-                <p className="mt-1 text-sm text-emerald-950">{summary}</p>
+                <p className="mt-2 text-sm leading-relaxed text-zinc-100">{summary}</p>
               </div>
             )}
 
-            <form onSubmit={startCall} className="flex flex-col gap-3">
-              <label className="flex flex-col gap-1 text-sm font-medium">
+            <form onSubmit={startCall} className="flex flex-col gap-6">
+              <label className={LABEL}>
                 Prospect name
                 <input
                   value={prospectName}
                   onChange={(event) => setProspectName(event.target.value)}
                   placeholder="e.g. Dev ji"
-                  className="rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-emerald-600"
+                  className={FIELD}
                 />
               </label>
-              <label className="flex flex-col gap-1 text-sm font-medium">
+              <label className={LABEL}>
                 Company
                 <input
                   value={company}
                   onChange={(event) => setCompany(event.target.value)}
                   placeholder="e.g. Kalpana Chem Supplies"
-                  className="rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-emerald-600"
+                  className={FIELD}
                 />
               </label>
-              <button
-                type="submit"
-                disabled={busy}
-                className="mt-1 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-800 disabled:opacity-50"
-              >
+              <button type="submit" disabled={busy} className={PRIMARY}>
                 {busy ? "Starting…" : "Start Call"}
               </button>
             </form>
@@ -305,61 +311,66 @@ export default function Home() {
         )}
 
         {phase === "active" && currentStage && (
-          <div className="flex flex-col gap-5">
-            <div className="flex gap-1">
+          <div className="flex flex-col gap-8">
+            <div className="flex items-center gap-2">
               {STAGES.map((item) => (
-                <div
+                <span
                   key={item.number}
                   title={`Stage ${item.number}: ${item.name}`}
-                  className={`h-2 flex-1 rounded-full ${
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-medium transition-all duration-300 ease-in-out ${
                     item.number < stage
-                      ? "bg-emerald-500"
+                      ? "bg-zinc-100 text-zinc-950"
                       : item.number === stage
-                        ? "bg-emerald-800"
-                        : "bg-zinc-200"
+                        ? "bg-zinc-100/10 text-zinc-50 ring-1 ring-zinc-100"
+                        : "bg-zinc-800/60 text-zinc-500"
                   }`}
-                />
+                >
+                  {item.number}
+                </span>
               ))}
             </div>
 
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <div className="flex flex-col gap-2">
+              <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
                 Stage {currentStage.number} · {currentStage.name}
               </p>
-              <p className="mt-1 text-sm text-zinc-600">
+              <p className="text-sm text-zinc-400">
                 Tap what happened, then capture the prospect&apos;s exact words.
               </p>
             </div>
 
             {currentStage.quotes && (
-              <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-amber-800">
+              <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 p-5 transition-all duration-300 ease-in-out">
+                <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
                   What prospects say here
                 </p>
-                <ul className="mt-2 space-y-2">
+                <ul className="mt-3 flex flex-col gap-2">
                   {currentStage.quotes.map((quote) => (
-                    <li key={quote.text} className="text-sm text-zinc-800">
-                      {quote.text}{" "}
-                      <span className="text-xs text-amber-800">({quote.freq})</span>
+                    <li
+                      key={quote.text}
+                      className="flex flex-col gap-0.5 text-sm text-zinc-100"
+                    >
+                      {quote.text}
+                      <span className="text-xs text-zinc-500">{quote.freq}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
 
-            <div>
-              <p className="mb-2 text-sm font-medium">What happened?</p>
-              <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-col gap-3">
+              <p className="text-sm font-medium text-zinc-400">What happened?</p>
+              <div className="grid grid-cols-2 gap-3">
                 {currentStage.options.map((option) => (
                   <button
                     key={option}
                     type="button"
                     onClick={() => setTapped(option)}
-                    className={`rounded-md border px-3 py-2 text-left text-sm transition-colors ${
+                    className={
                       tapped === option
-                        ? "border-emerald-700 bg-emerald-700 text-white"
-                        : "border-zinc-300 bg-white text-zinc-700 hover:border-zinc-400"
-                    }`}
+                        ? "rounded-xl border border-zinc-100 bg-zinc-100 px-4 py-3 text-left text-sm font-medium text-zinc-950 transition-all duration-300 ease-in-out hover:bg-white"
+                        : `${OUTLINE} px-4 py-3 text-left text-sm`
+                    }
                   >
                     {option}
                   </button>
@@ -367,32 +378,22 @@ export default function Home() {
               </div>
             </div>
 
-            <label className="flex flex-col gap-1 text-sm font-medium">
+            <label className={LABEL}>
               Prospect&apos;s exact words
               <textarea
                 value={words}
                 onChange={(event) => setWords(event.target.value)}
                 rows={4}
                 placeholder="Type what the prospect actually said…"
-                className="rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-emerald-600"
+                className={FIELD}
               />
             </label>
 
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={nextStage}
-                disabled={busy}
-                className="flex-1 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-800 disabled:opacity-50"
-              >
+            <div className="flex gap-4">
+              <button type="button" onClick={nextStage} disabled={busy} className={`${PRIMARY} flex-1`}>
                 {busy ? "Saving…" : stage === 8 ? "Log Stage 8" : "Next Stage →"}
               </button>
-              <button
-                type="button"
-                onClick={endCall}
-                disabled={busy}
-                className="flex-1 rounded-md border border-red-300 px-4 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-50 disabled:opacity-50"
-              >
+              <button type="button" onClick={endCall} disabled={busy} className={`${PRIMARY} flex-1`}>
                 End Call
               </button>
             </div>
@@ -400,26 +401,28 @@ export default function Home() {
         )}
       </section>
 
-      <section className="flex flex-col overflow-y-auto bg-zinc-50 p-6">
-        <header className="mb-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-semibold tracking-tight">Past Calls</h2>
-            <p className="text-sm text-zinc-500">
-              {calls.length === 0 ? "No calls yet" : `${calls.length} call${calls.length === 1 ? "" : "s"} logged`}
+      <section className={PANE}>
+        <header className="flex items-center justify-between gap-4">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-xl font-semibold tracking-tight text-zinc-50">Past Calls</h2>
+            <p className="text-sm text-zinc-400">
+              {calls.length === 0
+                ? "No calls yet"
+                : `${calls.length} call${calls.length === 1 ? "" : "s"} logged`}
             </p>
           </div>
           <button
             type="button"
             onClick={() => void loadCalls()}
             disabled={callsLoading}
-            className="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 transition-colors hover:bg-zinc-100 disabled:opacity-50"
+            className={`${OUTLINE} px-4 py-2 text-sm`}
           >
             {callsLoading ? "Loading…" : "Refresh"}
           </button>
         </header>
 
         {callsError && (
-          <p className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p className="rounded-xl border border-rose-900/60 bg-rose-950/40 px-4 py-3 text-sm text-rose-300 transition-all duration-300 ease-in-out">
             {callsError}
           </p>
         )}
@@ -430,27 +433,27 @@ export default function Home() {
           </p>
         )}
 
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-col gap-4">
           {calls.map((call) => (
             <li
               key={call.id}
-              className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm"
+              className="rounded-xl border border-zinc-800/60 bg-zinc-900/40 p-5 transition-all duration-300 ease-in-out hover:border-zinc-700/60 hover:bg-zinc-900/60"
             >
               <div className="flex items-baseline justify-between gap-3">
-                <p className="font-semibold text-zinc-900">{call.prospect_name}</p>
-                <span className="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-700">
+                <p className="font-semibold text-zinc-50">{call.prospect_name}</p>
+                <span className="shrink-0 rounded-full border border-zinc-800 bg-zinc-900/60 px-3 py-1 text-xs font-medium text-zinc-300 transition-all duration-300 ease-in-out">
                   {call.final_stage
                     ? `Stage ${call.final_stage} · ${stageName(call.final_stage)}`
                     : "No stages"}
                 </span>
               </div>
-              <p className="text-sm text-zinc-500">{call.company}</p>
+              <p className="mt-1 text-sm text-zinc-400">{call.company}</p>
               {call.outcome ? (
-                <p className="mt-2 border-t border-zinc-100 pt-2 text-sm text-zinc-700">
+                <p className="mt-3 border-t border-zinc-800/70 pt-3 text-sm leading-relaxed text-zinc-300">
                   {call.outcome}
                 </p>
               ) : (
-                <p className="mt-2 border-t border-zinc-100 pt-2 text-sm italic text-zinc-400">
+                <p className="mt-3 border-t border-zinc-800/70 pt-3 text-sm italic text-zinc-500">
                   No summary yet
                 </p>
               )}

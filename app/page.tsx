@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = "https://cold-call-copilot-backend.onrender.com";
 
 type Quote = { text: string; freq: string };
 

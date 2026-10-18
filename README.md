@@ -3,8 +3,8 @@
 A full-stack application designed to guide sales representatives through the 8 stages of a cold call, minimizing typing and maximizing active listening.
 
 ## Live Links
-* **Frontend (Vercel):** https://cold-call-copilot-[your-id].vercel.app
-* **Backend Health Check (Render):** https://cold-call-copilot-backend.onrender.com/health
+* **Frontend (Vercel):** https://cold-call-copilot-mu.vercel.app/
+* **Backend Health Check (Render):** https://cold-call-copilot-backend.onrender.com
 
 ## Database Schema
 The PostgreSQL schema (`schema.sql`) is located in the root of this repository. It includes two relational tables (`calls` and `call_stages`) using `gen_random_uuid()` for primary keys.
